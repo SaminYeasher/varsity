@@ -4,13 +4,19 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
+
+
 
 const app = express();
 connectDB();
-
+// Protected route example
+app.get("/api/student-dashboard", authMiddleware, (req, res) => {
+  res.json({ msg: "Welcome to the Student Dashboard!", user: req.user });
+});
 // Middlewares
 app.use(cors({
-    origin: "http://localhost:3001"
+    origin: "http://localhost:3000"
   }));
 app.use(express.json());
 

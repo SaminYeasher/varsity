@@ -1,10 +1,9 @@
-// frontend/src/pages/LoginPage.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
-  const [role, setRole] = useState("student"); // default to student
+  const [role, setRole] = useState("student"); // Default role: student
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,36 +12,44 @@ function LoginPage() {
 
   const handleRoleClick = (selectedRole) => {
     setRole(selectedRole);
-    setError("");
+    setError(""); // Reset error when role changes
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+  const handleLogin = async (event) => {
+    event.preventDefault(); // Prevents page refresh on form submit
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
         userId,
         password,
-        role, // pass role to the backend
+        role,
       });
 
-      // On success, decide where to go based on role
-      if (res.data.user.role === "student") {
+      // Get response data
+      const data = response.data;
+      
+      console.log("Login successful:", data);
+
+      // Store JWT token in local storage
+      localStorage.setItem("token", data.token);
+
+      // Redirect user based on role
+      if (data.user.role === "student") {
         navigate("/student-dashboard");
-      } else {
+      } else if (data.user.role === "faculty") {
         navigate("/faculty-dashboard");
       }
-    } catch (err) {
-      setError(err.response?.data?.msg || "Login failed");
+    } catch (error) {
+      console.error("Login failed:", error.response?.data?.msg || error.message);
+      setError(error.response?.data?.msg || "Login failed. Please try again.");
     }
   };
 
   return (
     <div className="login-page">
       <div className="login-container">
-      <img src="/edu_logo.png" alt="University Logo" className="logo" />
-        <h1>EAST DELTA UNIVRSITY</h1>
+        <img src="/edu_logo.png" alt="University Logo" className="logo" />
+        <h1>EAST DELTA UNIVERSITY</h1>
         <p>Advising System Portal</p>
 
         {/* Role Tabs */}
@@ -61,13 +68,12 @@ function LoginPage() {
           </button>
         </div>
 
+        {/* Login Form */}
         <form onSubmit={handleLogin} className="login-form">
           <label>{role === "student" ? "Student ID" : "Faculty ID"}</label>
           <input
             type="text"
-            placeholder={
-              role === "student" ? "Enter your Student ID" : "Enter your Faculty ID"
-            }
+            placeholder={role === "student" ? "Enter your Student ID" : "Enter your Faculty ID"}
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             required

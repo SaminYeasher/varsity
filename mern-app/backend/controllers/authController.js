@@ -1,7 +1,6 @@
-// backend/controllers/authController.js
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
-// Minimal login controller
 exports.login = async (req, res) => {
   try {
     const { userId, password, role } = req.body;
@@ -12,14 +11,22 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: "User not found or role mismatch" });
     }
 
-    // Check password (in production, compare hashed)
+    // Check password (if stored as plain text; ideally, use bcrypt)
     if (user.password !== password) {
       return res.status(401).json({ msg: "Invalid password" });
     }
 
-    // On success, return user info
+    // Generate JWT Token
+    const token = jwt.sign(
+      { userId: user.userId, role: user.role },  // Payload
+      process.env.JWT_SECRET,                    // Secret key
+      { expiresIn: "1h" }                        // Token expiration time
+    );
+
+    // On success, return token & user info
     return res.json({
       msg: "Login successful",
+      token,
       user: {
         fullName: user.fullName,
         userId: user.userId,
