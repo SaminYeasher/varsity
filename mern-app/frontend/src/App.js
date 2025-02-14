@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from "react";
+import logo from './logo.svg';
+import './App.css';
+// frontend/src/App.js
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import StudentDashboard from "./pages/StudentDashboard";
+import FacultyDashboard from "./pages/FacultyDashboard";
+import NotFound from "./pages/NotFound";
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:5000/")
-      .then((res) => res.text())
-      .then((data) => setMessage(data))
-      .catch((err) => console.log(err));
-  }, []);
-
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>React + Express + MongoDB</h1>
-      <p>Backend says: {message}</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+

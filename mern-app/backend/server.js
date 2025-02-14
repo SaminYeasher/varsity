@@ -1,18 +1,23 @@
+// backend/server.js
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+
 const app = express();
+connectDB();
 
-// Configure CORS to allow requests from localhost:3000
+// Middlewares
 app.use(cors({
-  origin: "http://localhost:3001"
-}));
-
-// Middleware to parse JSON
+    origin: "http://localhost:3001"
+  }));
 app.use(express.json());
 
-// Define routes here
+// Routes
+app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
-  res.send("Hello from the MERN backend!");
+  res.send("Hello from MERN backend!");
 });
 
 const PORT = process.env.PORT || 5000;
