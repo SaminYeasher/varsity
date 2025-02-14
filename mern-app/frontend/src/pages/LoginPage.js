@@ -41,6 +41,7 @@ function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-container">
+      <img src="/edu_logo.png" alt="University Logo" className="logo" />
         <h1>EAST DELTA UNIVRSITY</h1>
         <p>Advising System Portal</p>
 
